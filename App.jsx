@@ -105,6 +105,16 @@ const App = () => {
                       stroke="silver"
                     />
                   )}
+                    <SvgText
+                      dy=".35em"
+                      x={node.x - 20}
+                      y={node.y + 30}
+                      textAnchor="middle"
+                      fill="white"
+                      fontFamily="Arial, sans-serif"
+                      fontSize="14px">
+                      {node.data.name}
+                    </SvgText>
 
                   {/* below is spouse code */}
                   {Array.isArray(node.data.spouses) && (
@@ -146,6 +156,16 @@ const App = () => {
                         strokeWidth={1}
                         stroke="silver"
                       />
+                      <SvgText
+                        dy=".35em"
+                        x={node.x + 110}
+                        y={node.y + 30}
+                        textAnchor="middle"
+                        fill="white"
+                        fontFamily="Arial, sans-serif"
+                        fontSize="14px">
+                        {node.data.spouses[0]}
+                    </SvgText>
                     </>
                   )}
                 </G>
