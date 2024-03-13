@@ -1,30 +1,55 @@
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, {useRef, useState} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import * as d3 from 'd3-hierarchy';
-import { Path, G, Circle, Rect, Text as SvgText, Svg } from 'react-native-svg';
-import { PanGestureHandler, State,GestureHandlerRootView } from 'react-native-gesture-handler';
+import {Path, G, Circle, Rect, Text as SvgText, Svg} from 'react-native-svg';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 const App = () => {
-  const panRef = useRef(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  // const pressed = useSharedValue(false);
+  const x = useSharedValue(0);
+  const y = useSharedValue(0);
 
-  const onPanGestureEvent = (event) => {
-    if (event.nativeEvent.state === State.ACTIVE) {
-      const scaledTranslationX = event.nativeEvent.translationX / 10; // Scale down translation X
-      const scaledTranslationY = event.nativeEvent.translationY / 10; // Scale down translation Y
-      setOffset({ x: offset.x + scaledTranslationX, y: offset.y + scaledTranslationY });
-    }
-  };
+  const pan = Gesture.Pan().onChange(event => {
+    x.value += event.changeX;
+    y.value += event.changeY;
+  });
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {translateX: x.value},
+      {translateY: y.value},
+    ],
+  }));
 
   const data = [
-    { name: 'Grandparent', parent: '', spouses: ['Wife 1'], children: 2 },
-    { name: 'Parent 1', parent: 'Grandparent', spouses: ['Wife 1'], children: null },
-    { name: '', parent: 'Parent 1' },
-    { name: 'Parent 2', parent: 'Grandparent', spouses: ['Wife 2'], children: 2 },
-    { name: 'Child 3', parent: 'Parent 2' },
-    { name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 3'], children: 2 },
-    { name: 'Child 5', parent: 'Child 4' },
-    { name: 'Child 6', parent: 'Child 4' },
+    {name: 'Grandparent', parent: '', spouses: ['Wife 1'], children: 2},
+    {
+      name: 'Parent 1',
+      parent: 'Grandparent',
+      spouses: ['Wife 1'],
+      children: 2,
+    },
+    {name: 'Child n1', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
+    {name: '', parent: 'Parent 1'},
+    {name: 'Child n2', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
+    {name: '', parent: 'Parent 1'},
+    {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
+    {name: 'Parent 2', parent: 'Grandparent', spouses: ['Wife 2'], children: 2},
+    {name: 'Child 3', parent: 'Parent 2'},
+    {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
+    {name: '', parent: 'Parent 2'},
+    {name: 'Child 5', parent: 'Child 4'},
+    {name: 'Child 6', parent: 'Child 4'},
   ];
 
   const treeData = d3
@@ -32,35 +57,39 @@ const App = () => {
     .id(d => d.name)
     .parentId(d => d.parent)(data);
 
-  const treeLayout = d3.tree().size([750, 200]);
+  const treeLayout = d3.tree().size([1100, 300]);
   const nodes = treeLayout(treeData);
 
   return (
-    <View style={{ backgroundColor: '#4d4d4d', flex: 1 }}>
+    <View style={{backgroundColor: '#4d4d4d', flex: 1}}>
       <GestureHandlerRootView>
-        <PanGestureHandler
-          ref={panRef}
-          onGestureEvent={onPanGestureEvent}
-          simultaneousHandlers={panRef}
-          shouldCancelWhenOutside={false}
-        >
-          <View>
-            <Svg width={1200} height={900} transform={`translate(${offset.x}, ${offset.y})`}>
+        <GestureDetector gesture={pan}>
+          <Animated.View style={animatedStyles}>
+            <Svg width={1200} height={900}>
               {nodes.links().map((link, index) => (
                 <>
-                {link.target.data.name && (
-                  <Path
-                    transform={{ translateY: 5 }}
-                    key={index}
-                    d={'M' + (link.source.x - 20) + ',' + link.source.y + 'h 60 v 50 H' + link.target.x + 'V' + link.target.y}
-                    fill="none"
-                    stroke="orange"
-                  />
-                )}
+                  {link.target.data.name && (
+                    <Path
+                      transform={{translateY: 30}}
+                      key={index}
+                      d={
+                        'M' +
+                        (link.source.x - 20) +
+                        ',' +
+                        link.source.y +
+                        'h 60 v 50 H' +
+                        (link.target.x - 20) +
+                        'V' +
+                        link.target.y
+                      }
+                      fill="none"
+                      stroke="orange"
+                    />
+                  )}
                 </>
               ))}
               {nodes.descendants().map((node, index) => (
-                <G key={index} transform={{ translateY: 20 }}>
+                <G key={index} transform={{translateY: 30}}>
                   {node.data.name && (
                     <Rect
                       x={node.x - 60}
@@ -79,18 +108,22 @@ const App = () => {
                       {/* spouse default connection when they have children */}
                       {node.data.children ? (
                         <Path
-                          transform={{ translateY: 0 }}
+                          transform={{translateY: 15}}
                           key={index}
-                          d={'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 20 '}
+                          d={
+                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 20 '
+                          }
                           fill="none"
                           stroke="orange"
                         />
                       ) : (
                         // spouse connection when they dont have children
                         <Path
-                          transform={{ translateY: 0 }}
+                          transform={{translateY: 15}}
                           key={index}
-                          d={'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '}
+                          d={
+                            'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '
+                          }
                           fill="none"
                           stroke="orange"
                         />
@@ -111,8 +144,8 @@ const App = () => {
                 </G>
               ))}
             </Svg>
-          </View>
-        </PanGestureHandler>
+          </Animated.View>
+        </GestureDetector>
       </GestureHandlerRootView>
     </View>
   );
