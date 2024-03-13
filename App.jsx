@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text,Image} from 'react-native';
 import * as d3 from 'd3-hierarchy';
 import {Path, G, Circle, Rect, Text as SvgText, Svg} from 'react-native-svg';
 import Animated, {
@@ -32,10 +32,10 @@ const App = () => {
   }));
 
   const data = [
-    {name: 'Grandparent', parent: '', spouses: ['Wife 1'], children: 2},
+    {name: 'Root', parent: '', spouses: ['Wife of Root'], children: 2},
     {
       name: 'Parent 1',
-      parent: 'Grandparent',
+      parent: 'Root',
       spouses: ['Wife 1'],
       children: 2,
     },
@@ -44,7 +44,7 @@ const App = () => {
     {name: 'Child n2', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
     {name: '', parent: 'Parent 1'},
     {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
-    {name: 'Parent 2', parent: 'Grandparent', spouses: ['Wife 2'], children: 2},
+    {name: 'Parent 2', parent: 'Root', spouses: ['Wife 2'], children: 2},
     {name: 'Child 3', parent: 'Parent 2'},
     {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
     {name: '', parent: 'Parent 2'},
@@ -103,18 +103,31 @@ const App = () => {
                       height={110}
                       strokeWidth={1}
                       stroke="silver"
+                      rx={10} 
+                      ry={10} 
                     />
                   )}
                     <SvgText
                       dy=".35em"
                       x={node.x - 20}
-                      y={node.y + 30}
+                      y={node.y + 70}
                       textAnchor="middle"
                       fill="white"
                       fontFamily="Arial, sans-serif"
-                      fontSize="14px">
+                      fontSize="10px">
                       {node.data.name}
                     </SvgText>
+                    <Image 
+                      source={{uri:'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg'}}
+                      style={{
+                        borderRadius:50,
+                        width : 60,
+                        height : 60,
+                        position: 'absolute',
+                        left: node.x - 50, 
+                        top: node.y + 15
+                      }}
+                    />
 
                   {/* below is spouse code */}
                   {Array.isArray(node.data.spouses) && (
@@ -155,17 +168,30 @@ const App = () => {
                         height={110}
                         strokeWidth={1}
                         stroke="silver"
+                        rx={10} 
+                        ry={10} 
                       />
                       <SvgText
                         dy=".35em"
                         x={node.x + 110}
-                        y={node.y + 30}
+                        y={node.y + 70}
                         textAnchor="middle"
                         fill="white"
                         fontFamily="Arial, sans-serif"
-                        fontSize="14px">
+                        fontSize="10px">
                         {node.data.spouses[0]}
                     </SvgText>
+                    <Image 
+                      source={{uri:'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg'}}
+                      style={{
+                        borderRadius:50,
+                        width : 60,
+                        height : 60,
+                        position: 'absolute',
+                        left: node.x + 80, 
+                        top: node.y + 15
+                      }}
+                    />
                     </>
                   )}
                 </G>
