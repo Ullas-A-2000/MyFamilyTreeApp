@@ -57,7 +57,7 @@ const App = () => {
     .id(d => d.name)
     .parentId(d => d.parent)(data);
   //card height
-  const treeLayout = d3.tree().size([1100, 600]);
+  const treeLayout = d3.tree().size([1400, 600]);
   const nodes = treeLayout(treeData);
 
   return (
@@ -66,7 +66,7 @@ const App = () => {
         <GestureDetector gesture={pan}>
           <Animated.View style={[animatedStyles]}>
           {/* card height */}
-            <Svg width={1200} height={900} transform={{translateY: 30}}>
+            <Svg width={1400} height={900} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
@@ -79,7 +79,7 @@ const App = () => {
                         ',' +
                         link.source.y +
                           //card height
-                        'h 60 v 80 H' +
+                        'h 65 v 80 H' +
                         (link.target.x - 20) +
                         'V' +
                         link.target.y
@@ -95,12 +95,12 @@ const App = () => {
                 <G key={index} transform={{translateY: 0}}>
                   {node.data.name && (
                     <Rect
-                      x={node.x - 60}
+                      x={node.x - 65}
                       y={node.y - 20}
                       fill="#4d4d4d"
-                      width={80}
+                      width={90}
                         //card height
-                      height={100}
+                      height={110}
                       strokeWidth={1}
                       stroke="silver"
                     />
@@ -116,7 +116,7 @@ const App = () => {
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 20 '
+                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 30 '
                           }
                           fill="none"
                           stroke="orange"
@@ -128,7 +128,7 @@ const App = () => {
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '
+                            'M' + (node.x + 25) + ',' + (node.y - 15) + 'h 40 '
                           }
                           fill="none"
                           stroke="orange"
@@ -137,12 +137,12 @@ const App = () => {
 
                       {/* below is spouse boxes */}
                       <Rect
-                        x={node.x + 60}
+                        x={node.x + 65}
                         y={node.y - 20}
                         fill="#4d4d4d"
-                        width={80}
+                        width={90}
                         //card height
-                        height={100}
+                        height={110}
                         strokeWidth={1}
                         stroke="silver"
                       />
