@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {View, StyleSheet, Text,Image} from 'react-native';
+import {View, StyleSheet, Text, Image} from 'react-native';
 import * as d3 from 'd3-hierarchy';
 import {Path, G, Circle, Rect, Text as SvgText, Svg} from 'react-native-svg';
 import Animated, {
@@ -25,10 +25,7 @@ const App = () => {
   });
 
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [
-      {translateX: x.value},
-      {translateY: y.value},
-    ],
+    transform: [{translateX: x.value}, {translateY: y.value}],
   }));
 
   const data = [
@@ -61,11 +58,11 @@ const App = () => {
   const nodes = treeLayout(treeData);
 
   return (
-    <View style={{backgroundColor: '#4d4d4d', flex: 1}}>
+    <View style={{flex: 1}}>
       <GestureHandlerRootView>
         <GestureDetector gesture={pan}>
           <Animated.View style={[animatedStyles]}>
-          {/* card height */}
+            {/* card height */}
             <Svg width={1400} height={900} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
@@ -78,56 +75,97 @@ const App = () => {
                         (link.source.x - 20) +
                         ',' +
                         link.source.y +
-                          //card height
+                        //card height
                         'h 65 v 80 H' +
                         (link.target.x - 20) +
                         'V' +
                         link.target.y
                       }
                       fill="none"
-                      stroke="orange"
+                      stroke="lightgrey"
                     />
                   )}
                 </>
               ))}
               {nodes.descendants().map((node, index) => (
-                //card height 
+                //card height
                 <G key={index} transform={{translateY: 0}}>
                   {node.data.name && (
-                    <Rect
-                      x={node.x - 65}
-                      y={node.y - 20}
-                      fill="#4d4d4d"
-                      width={90}
-                        //card height
-                      height={110}
-                      strokeWidth={1}
-                      stroke="silver"
-                      rx={10} 
-                      ry={10} 
-                    />
-                  )}
-                    <SvgText
-                      dy=".35em"
-                      x={node.x - 20}
-                      y={node.y + 70}
-                      textAnchor="middle"
-                      fill="white"
-                      fontFamily="Arial, sans-serif"
-                      fontSize="10px">
-                      {node.data.name}
-                    </SvgText>
-                    <Image 
-                      source={{uri:'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg'}}
+                    <View
                       style={{
-                        borderRadius:50,
-                        width : 60,
-                        height : 60,
                         position: 'absolute',
-                        left: node.x - 50, 
-                        top: node.y + 15
+                        zIndex: 10,
+                        left: node.x - 65,
+                        top: node.y + 10,
+                        width: 90,
+                        height: 110,
+                        backgroundColor: 'white',
+                        borderRadius: 10,
+                        shadowColor: 'black',
+                        shadowOffset: {width: 0, height: 2},
+                        shadowOpacity: 0.5,
+                        shadowRadius: 4,
+                        elevation: 5,
+                      }}>
+                      <Rect
+                        // x={node.x - 65}
+                        // y={node.y - 20}
+                        // fill="white"
+                        width={90}
+                        //card height
+                        height={110}
+                        strokeWidth={1}
+                        stroke="silver"
+                        rx={10}
+                        ry={10}
+                        shadowColor="black"
+                        shadowOffset={{width: 0, height: 2}}
+                        shadowOpacity={0.5}
+                        shadowRadius={4}
+                        elevation={5}
+                      />
+                      <Image
+                        source={{
+                          uri: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
+                        }}
+                        style={{
+                          borderRadius: 50,
+                          width: 60,
+                          height: 60,
+                          position: 'absolute',
+                          left: 14,
+                          top: 5,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          left: 0,
+                          top: 80,
+                          fontSize: 10,
+                          textAlign: 'center',
+                          color: 'black',
+                        }}>
+                        {' '}
+                        {node.data.name}
+                      </Text>
+                    </View>
+                  )}
+
+                  {node.data.name && (
+                    <Image
+                      source={{
+                        uri: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
+                      }}
+                      style={{
+                        borderRadius: 50,
+                        width: 60,
+                        height: 60,
+                        position: 'absolute',
+                        left: node.x - 50,
+                        top: node.y + 15,
                       }}
                     />
+                  )}
 
                   {/* below is spouse code */}
                   {Array.isArray(node.data.spouses) && (
@@ -139,59 +177,79 @@ const App = () => {
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 30 '
+                            'M' + (node.x + 45) + ',' + (node.y - 15) + 'h 30 '
                           }
                           fill="none"
-                          stroke="orange"
+                          stroke="blue"
                         />
                       ) : (
                         // spouse connection when they dont have children
                         <Path
-                        //card height
+                          //card height
                           transform={{translateY: 45}}
                           key={index}
                           d={
                             'M' + (node.x + 25) + ',' + (node.y - 15) + 'h 40 '
                           }
                           fill="none"
-                          stroke="orange"
+                          stroke="blue"
                         />
                       )}
 
                       {/* below is spouse boxes */}
-                      <Rect
-                        x={node.x + 65}
-                        y={node.y - 20}
-                        fill="#4d4d4d"
-                        width={90}
-                        //card height
-                        height={110}
-                        strokeWidth={1}
-                        stroke="silver"
-                        rx={10} 
-                        ry={10} 
+                      <View
+                        style={{
+                          position: 'absolute',
+                          left: node.x + 65,
+                          top: node.y + 10,
+                          width: 90,
+                          height: 110,
+                          backgroundColor: 'white',
+                          borderRadius: 10,
+                          shadowColor: 'black',
+                          shadowOffset: {width: 0, height: 2},
+                          shadowOpacity: 0.5,
+                          shadowRadius: 4,
+                          elevation: 5,
+                        }}>
+                        <Rect
+                          // x={node.x + 65}
+                          // y={node.y - 20}
+                          fill="white"
+                          width={90}
+                          //card height
+                          height={110}
+                          strokeWidth={1}
+                          stroke="silver"
+                          rx={10}
+                          ry={10}
+                        />
+                        <Text
+                          style={{
+                            left: 0,
+                            top: 80,
+                            fontSize: 10,
+                            textAlign: 'center',
+                            color: 'black',
+                          }}>
+                          {' '}
+                          {node.data.spouses[0]}
+                        </Text>
+                      </View>
+
+                      <Image
+                        source={{
+                          uri: 'https://www.getnews.info/uploads/bb4710262b9221a3406b68c63334e1b3.jpg',
+                        }}
+                        style={{
+                          borderRadius: 50,
+                          width: 60,
+                          height: 60,
+                          position: 'absolute',
+                          left: node.x + 80,
+                          top: node.y + 15,
+                        }}
                       />
-                      <SvgText
-                        dy=".35em"
-                        x={node.x + 110}
-                        y={node.y + 70}
-                        textAnchor="middle"
-                        fill="white"
-                        fontFamily="Arial, sans-serif"
-                        fontSize="10px">
-                        {node.data.spouses[0]}
-                    </SvgText>
-                    <Image 
-                      source={{uri:'https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg'}}
-                      style={{
-                        borderRadius:50,
-                        width : 60,
-                        height : 60,
-                        position: 'absolute',
-                        left: node.x + 80, 
-                        top: node.y + 15
-                      }}
-                    />
                     </>
                   )}
                 </G>
