@@ -56,16 +56,17 @@ const App = () => {
     .stratify()
     .id(d => d.name)
     .parentId(d => d.parent)(data);
-
-  const treeLayout = d3.tree().size([1100, 300]);
+  //card height
+  const treeLayout = d3.tree().size([1100, 600]);
   const nodes = treeLayout(treeData);
 
   return (
     <View style={{backgroundColor: '#4d4d4d', flex: 1}}>
       <GestureHandlerRootView>
         <GestureDetector gesture={pan}>
-          <Animated.View style={animatedStyles}>
-            <Svg width={1200} height={900}>
+          <Animated.View style={[animatedStyles]}>
+          {/* card height */}
+            <Svg width={1200} height={900} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
@@ -77,7 +78,8 @@ const App = () => {
                         (link.source.x - 20) +
                         ',' +
                         link.source.y +
-                        'h 60 v 50 H' +
+                          //card height
+                        'h 60 v 80 H' +
                         (link.target.x - 20) +
                         'V' +
                         link.target.y
@@ -89,14 +91,16 @@ const App = () => {
                 </>
               ))}
               {nodes.descendants().map((node, index) => (
-                <G key={index} transform={{translateY: 30}}>
+                //card height 
+                <G key={index} transform={{translateY: 0}}>
                   {node.data.name && (
                     <Rect
                       x={node.x - 60}
                       y={node.y - 20}
                       fill="#4d4d4d"
                       width={80}
-                      height={40}
+                        //card height
+                      height={100}
                       strokeWidth={1}
                       stroke="silver"
                     />
@@ -108,7 +112,8 @@ const App = () => {
                       {/* spouse default connection when they have children */}
                       {node.data.children ? (
                         <Path
-                          transform={{translateY: 15}}
+                          //card height
+                          transform={{translateY: 45}}
                           key={index}
                           d={
                             'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 20 '
@@ -119,7 +124,8 @@ const App = () => {
                       ) : (
                         // spouse connection when they dont have children
                         <Path
-                          transform={{translateY: 15}}
+                        //card height
+                          transform={{translateY: 45}}
                           key={index}
                           d={
                             'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '
@@ -135,7 +141,8 @@ const App = () => {
                         y={node.y - 20}
                         fill="#4d4d4d"
                         width={80}
-                        height={40}
+                        //card height
+                        height={100}
                         strokeWidth={1}
                         stroke="silver"
                       />
