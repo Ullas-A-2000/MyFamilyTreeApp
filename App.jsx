@@ -49,12 +49,22 @@ const App = () => {
     {name: 'Child 6', parent: 'Child 4'},
   ];
 
+  // const data = [
+  //   {name: 'Root', parent: '', spouses: ['Wife of Root'], children: 2},
+
+  //   {name: 'Child n1', parent: 'Root',spouses: ['Wife'],children: 1},
+  //   {name: 'Child n2', parent: 'Child n1' },
+  //   {name: 'Child n3', parent: 'Child n1'},
+  //   {name: 'Child n2', parent: 'Root'},
+
+  // ];
+
   const treeData = d3
     .stratify()
     .id(d => d.name)
     .parentId(d => d.parent)(data);
   //card height
-  const treeLayout = d3.tree().size([1400, 600]);
+  const treeLayout = d3.tree().size([1800, 700]);
   const nodes = treeLayout(treeData);
 
   return (
@@ -63,7 +73,7 @@ const App = () => {
         <GestureDetector gesture={pan}>
           <Animated.View style={[animatedStyles]}>
             {/* card height */}
-            <Svg width={1400} height={900} transform={{translateY: 30}}>
+            <Svg width={1800} height={900} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
@@ -76,8 +86,8 @@ const App = () => {
                         ',' +
                         link.source.y +
                         //card height
-                        'h 65 v 80 H' +
-                        (link.target.x - 20) +
+                        'h 60 v 80 H' +
+                        (link.target.x + 40) +
                         'V' +
                         link.target.y
                       }
@@ -95,7 +105,7 @@ const App = () => {
                       style={{
                         position: 'absolute',
                         zIndex: 10,
-                        left: node.x - 65,
+                        left: node?.data?.spouses?.length <= 0 || !node?.data?.spouses ? node.x - 5 : node.x - 70 ,
                         top: node.y + 10,
                         width: 90,
                         height: 110,
@@ -113,11 +123,9 @@ const App = () => {
                         // fill="white"
                         width={90}
                         //card height
-                        height={110}
+                        // height={110}
                         strokeWidth={1}
                         stroke="silver"
-                        rx={10}
-                        ry={10}
                         shadowColor="black"
                         shadowOffset={{width: 0, height: 2}}
                         shadowOpacity={0.5}
@@ -151,22 +159,6 @@ const App = () => {
                     </View>
                   )}
 
-                  {node.data.name && (
-                    <Image
-                      source={{
-                        uri: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
-                      }}
-                      style={{
-                        borderRadius: 50,
-                        width: 60,
-                        height: 60,
-                        position: 'absolute',
-                        left: node.x - 50,
-                        top: node.y + 15,
-                      }}
-                    />
-                  )}
-
                   {/* below is spouse code */}
                   {Array.isArray(node.data.spouses) && (
                     <>
@@ -177,8 +169,8 @@ const App = () => {
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 45) + ',' + (node.y - 15) + 'h 30 '
-                          }
+                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 30 ' 
+                            }
                           fill="none"
                           stroke="blue"
                         />
@@ -189,7 +181,7 @@ const App = () => {
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 25) + ',' + (node.y - 15) + 'h 40 '
+                            'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '
                           }
                           fill="none"
                           stroke="blue"
@@ -200,7 +192,7 @@ const App = () => {
                       <View
                         style={{
                           position: 'absolute',
-                          left: node.x + 65,
+                          left: node.x + 60,
                           top: node.y + 10,
                           width: 90,
                           height: 110,
