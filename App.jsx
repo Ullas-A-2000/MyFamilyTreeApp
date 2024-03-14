@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
+  withDecay
 } from 'react-native-reanimated';
 import {
   Gesture,
@@ -18,15 +19,28 @@ const App = () => {
   // const pressed = useSharedValue(false);
   const x = useSharedValue(0);
   const y = useSharedValue(0);
+  const scaleN = useSharedValue(1);
+
+
 
   const pan = Gesture.Pan().onChange(event => {
     x.value += event.changeX;
     y.value += event.changeY;
   });
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{translateX: x.value}, {translateY: y.value}],
+  const pinch = Gesture.Pinch().onChange(event => {
+    scaleN.value = event.scale;
+  });
+
+  const animatedStylesScale = useAnimatedStyle(() => ({
+    transform: [{scale:scaleN.value}],
   }));
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{scale:scaleN.value}, {translateX: x.value}, {translateY: y.value}],
+  }));
+
+  const composed = Gesture.Simultaneous(pan, pinch);
 
   const data = [
     {name: 'Root', parent: '', spouses: ['Wife of Root'], children: 2},
@@ -70,10 +84,12 @@ const App = () => {
   return (
     <View style={{flex: 1}}>
       <GestureHandlerRootView>
-        <GestureDetector gesture={pan}>
+      {/* <GestureDetector gesture={pinch}> */}
+        {/* <Animated.View style={[animatedStylesScale]}> */}
+        <GestureDetector gesture={composed}>
           <Animated.View style={[animatedStyles]}>
             {/* card height */}
-            <Svg width={1800} height={900} transform={{translateY: 30}}>
+            <Svg width={1800} height={700} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
@@ -249,6 +265,9 @@ const App = () => {
             </Svg>
           </Animated.View>
         </GestureDetector>
+        {/* </Animated.View> */}
+        {/* </GestureDetector> */}
+        
       </GestureHandlerRootView>
     </View>
   );
