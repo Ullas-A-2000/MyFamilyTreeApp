@@ -64,7 +64,7 @@ const App = () => {
     .id(d => d.name)
     .parentId(d => d.parent)(data);
   //card height
-  const treeLayout = d3.tree().size([1800, 700]);
+  const treeLayout = d3.tree().size([1700, 700]);
   const nodes = treeLayout(treeData);
 
   return (
@@ -147,7 +147,7 @@ const App = () => {
                       />
                       <Text
                         style={{
-                          left: 0,
+                          left: -1,
                           top: 80,
                           fontSize: 10,
                           textAlign: 'center',
