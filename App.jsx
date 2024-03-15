@@ -56,11 +56,32 @@ const App = () => {
     {name: '', parent: 'Parent 1'},
     {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
     {name: 'Parent 2', parent: 'Root', spouses: ['Wife 2'], children: 2},
-    {name: 'Child 3', parent: 'Parent 2'},
+    {name: 'Child 3', parent: 'Parent 2',spouses: ['Wife 2'], children: null},
+    {name: '', parent: 'Parent 2'},
     {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
     {name: '', parent: 'Parent 2'},
+    {name: 'Child n', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
+    // {name: '', parent: 'Parent 2'},
     {name: 'Child 5', parent: 'Child 4'},
-    {name: 'Child 6', parent: 'Child 4'},
+    {name: 'Child n6', parent: 'Child 4'},
+    {name: 'Child n7', parent: 'Child 4'},
+    {name: 'Child n8', parent: 'Child 4'},
+    {name: 'Child n9', parent: 'Child 4',spouses:['Wife n']},
+    {name: '', parent: 'Child 4'},
+    {name: 'demo1', parent: 'Child n9'},
+    {name: '', parent: 'Child n9'},
+    {name: 'demo2', parent: 'Child n9',spouses:['wife n']},
+    {name: 'Child n0', parent: 'Child 4'},
+    {name: 'Child n11', parent: 'Child 4'},
+    {name: 'Child n12', parent: 'Child 4'},
+    {name: 'Child n13', parent: 'Child 4',spouses:['Wife n'],children:2},
+    {name: 'Child 1', parent: 'Child n13'},
+    {name: 'Child 2', parent: 'Child n13'},
+    {name: 'Child 3', parent: 'Child n13'},
+    {name: 'Child 1', parent: 'demo2'},
+    {name: 'Child b2', parent: 'demo2',spouses:['Wife n'],children:2},
+    {name: 'dump', parent: 'Child b2'},
+
   ];
 
   // const data = [
@@ -78,7 +99,7 @@ const App = () => {
     .id(d => d.name)
     .parentId(d => d.parent)(data);
   //card height
-  const treeLayout = d3.tree().size([1700, 700]);
+  const treeLayout = d3.tree().size([2000, 1000]);
   const nodes = treeLayout(treeData);
 
   return (
@@ -89,27 +110,48 @@ const App = () => {
         <GestureDetector gesture={composed}>
           <Animated.View style={[animatedStyles]}>
             {/* card height */}
-            <Svg width={1800} height={700} transform={{translateY: 30}}>
+            <Svg width={3700} height={1000} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
-                    <Path
-                      transform={{translateY: 30}}
-                      key={index}
-                      d={
-                        'M' +
-                        (link.source.x - 20) +
-                        ',' +
-                        link.source.y +
-                        //card height
-                        'h 60 v 80 H' +
-                        (link.target.x + 40) +
-                        'V' +
-                        link.target.y
-                      }
-                      fill="none"
-                      stroke="lightgrey"
-                    />
+                  <Path
+                  transform={{translateY: 30}}
+                  key={index}
+                  d={ link?.target?.data?.spouses ? 
+                    'M' +
+                    (link.source.x + 60 ) +
+                    ',' +
+                    (link.source.y + 0) +
+                    // card height
+                    'v 60 H' +
+                    (link.target.x) +
+                    'V' +
+                    link.target.y +
+                    // Straight line command
+                    'L' +
+                    (link.target.x + 60) + ',' + (link.target.y) :
+                    'M' +
+                    (link.source.x + 60 ) +
+                    ',' +
+                    (link.source.y + 0) +
+                    // card height
+                    'v 60 H' +
+                    (link.target.x) +
+                    'V' +
+                    link.target.y +
+                    // Straight line command
+                    'L' +
+                    (link.target.x + 0) + ',' + (link.target.y) 
+                   
+                  }
+                  fill={"none"}
+                  stroke={"darkblue"} 
+                  strokeWidth={1} 
+                  stroke="darkblue"
+                >
+                <animate attributeName="stroke" values="darkblue; red" dur="1s" repeatCount="indefinite" /> 
+                </Path>
+                
                   )}
                 </>
               ))}
@@ -121,8 +163,8 @@ const App = () => {
                       style={{
                         position: 'absolute',
                         zIndex: 10,
-                        left: node?.data?.spouses?.length <= 0 || !node?.data?.spouses ? node.x - 5 : node.x - 70 ,
-                        top: node.y + 10,
+                        left: node?.data?.spouses ? node.x - 45 : node.x- 45,
+                        top: node.y,
                         width: 90,
                         height: 110,
                         backgroundColor: 'white',
@@ -134,12 +176,9 @@ const App = () => {
                         elevation: 5,
                       }}>
                       <Rect
-                        // x={node.x - 65}
-                        // y={node.y - 20}
-                        // fill="white"
+                       
                         width={90}
-                        //card height
-                        // height={110}
+                       
                         strokeWidth={1}
                         stroke="silver"
                         shadowColor="black"
@@ -178,38 +217,39 @@ const App = () => {
                   {/* below is spouse code */}
                   {Array.isArray(node.data.spouses) && (
                     <>
-                      {/* spouse default connection when they have children */}
+                   
                       {node.data.children ? (
                         <Path
-                          //card height
+                        
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 40) + ',' + (node.y - 15) + 'h 30 ' 
+                            'M' + (node.x +25) + ',' + (node.y - 15) + 'h 60 ' 
                             }
-                          fill="none"
-                          stroke="blue"
+                            fill={"none"}
+                            strokeWidth={1} 
+                            stroke="grey"
                         />
                       ) : (
-                        // spouse connection when they dont have children
+                    
                         <Path
-                          //card height
+        
                           transform={{translateY: 45}}
                           key={index}
                           d={
-                            'M' + (node.x + 20) + ',' + (node.y - 15) + 'h 40 '
+                            'M' + (node.x + 25) + ',' + (node.y - 15) + 'h 60 '
                           }
-                          fill="none"
-                          stroke="blue"
+                          fill={"none"}
+                          strokeWidth={1} 
+                          stroke="grey"
                         />
                       )}
 
-                      {/* below is spouse boxes */}
                       <View
                         style={{
                           position: 'absolute',
-                          left: node.x + 60,
-                          top: node.y + 10,
+                          left: node.x + 75,
+                          top: node.y ,
                           width: 90,
                           height: 110,
                           backgroundColor: 'white',
@@ -221,11 +261,9 @@ const App = () => {
                           elevation: 5,
                         }}>
                         <Rect
-                          // x={node.x + 65}
-                          // y={node.y - 20}
                           fill="white"
                           width={90}
-                          //card height
+                    
                           height={110}
                           strokeWidth={1}
                           stroke="silver"
@@ -254,8 +292,8 @@ const App = () => {
                           width: 60,
                           height: 60,
                           position: 'absolute',
-                          left: node.x + 80,
-                          top: node.y + 15,
+                          left: node.x + 90,
+                          top: node.y + 5,
                         }}
                       />
                     </>
