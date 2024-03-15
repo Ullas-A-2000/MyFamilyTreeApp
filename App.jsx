@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
 import React, {useRef, useState} from 'react';
 import {View, StyleSheet, Text, Image} from 'react-native';
 import * as d3 from 'd3-hierarchy';
@@ -52,15 +54,15 @@ const App = () => {
     },
     {name: 'Child n1', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
     {name: '', parent: 'Parent 1'},
-    {name: 'Child n2', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
-    {name: '', parent: 'Parent 1'},
-    {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
-    {name: 'Parent 2', parent: 'Root', spouses: ['Wife 2'], children: 2},
-    {name: 'Child 3', parent: 'Parent 2'},
-    {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
-    {name: '', parent: 'Parent 2'},
-    {name: 'Child 5', parent: 'Child 4'},
-    {name: 'Child 6', parent: 'Child 4'},
+    // {name: 'Child n2', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
+    // {name: '', parent: 'Parent 1'},
+    // {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
+    // {name: 'Parent 2', parent: 'Root', spouses: ['Wife 2'], children: 2},
+    // {name: 'Child 3', parent: 'Parent 2'},
+    // {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
+    // {name: '', parent: 'Parent 2'},
+    // {name: 'Child 5', parent: 'Child 4'},
+    // {name: 'Child 6', parent: 'Child 4'},
   ];
 
   // const data = [
@@ -71,7 +73,7 @@ const App = () => {
   //   {name: 'Child n3', parent: 'Child n1'},
   //   {name: 'Child n2', parent: 'Root'},
 
-  // ];
+  // ]; 
 
   const treeData = d3
     .stratify()
@@ -81,6 +83,30 @@ const App = () => {
   const treeLayout = d3.tree().size([1700, 700]);
   const nodes = treeLayout(treeData);
 
+  if (data.length > 0) {
+    
+  }
+
+  
+    let root = d3.hierarchy(treeData, function(d) {
+            return d.parent;
+        });
+        console.log(root);
+
+  //   // Collapse after second level
+    root.data.children.forEach(collapse);
+    root.x0 = 0;
+    root.y0 = 0;
+
+  //   // Collapse the node and all it's children
+    function collapse(d) {
+      if (d.children) {
+          d._children = d.children
+          d._children.forEach(collapse)
+          d.children = null
+      }
+  }
+
   return (
     <View style={{flex: 1}}>
       <GestureHandlerRootView>
@@ -89,7 +115,7 @@ const App = () => {
         <GestureDetector gesture={composed}>
           <Animated.View style={[animatedStyles]}>
             {/* card height */}
-            <Svg width={1800} height={700} transform={{translateY: 30}}>
+            <Svg width={1800} height={800} transform={{translateY: 30}}>
               {nodes.links().map((link, index) => (
                 <>
                   {link.target.data.name && (
@@ -103,7 +129,7 @@ const App = () => {
                         link.source.y +
                         //card height
                         'h 60 v 80 H' +
-                        (link.target.x + 40) +
+                        (link.target.x - 25) +
                         'V' +
                         link.target.y
                       }
@@ -121,7 +147,7 @@ const App = () => {
                       style={{
                         position: 'absolute',
                         zIndex: 10,
-                        left: node?.data?.spouses?.length <= 0 || !node?.data?.spouses ? node.x - 5 : node.x - 70 ,
+                        left: node?.data?.spouses?.length <= 0 || !node?.data?.spouses ? node.x - 70 : node.x - 70 ,
                         top: node.y + 10,
                         width: 90,
                         height: 110,
