@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Text, View, Image} from 'react-native';
 import React from 'react';
 import {Rect} from 'react-native-svg';
@@ -8,7 +9,13 @@ export default function Spouses({node, index, spouse, viewWidth, gap}) {
     <>
       {spouse.personalDetails.isPlus ? (
         <>
-          <PlusCards node={node} index={index} spouse={spouse} />
+          <PlusCards
+            node={node}
+            index={index}
+            spouse={spouse}
+            viewWidth={viewWidth}
+            gap={gap}
+          />
         </>
       ) : (
         <>

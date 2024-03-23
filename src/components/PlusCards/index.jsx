@@ -2,7 +2,7 @@
 import {Text, View, Image} from 'react-native';
 import React from 'react';
 import {Rect} from 'react-native-svg';
-export default function PlusCards({node, index, spouse}) {
+export default function PlusCards({node, index, spouse, viewWidth, gap}) {
   return (
     <>
       <View
