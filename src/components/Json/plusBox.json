@@ -1,0 +1,20 @@
+{
+  "_id": "",
+  "personalDetails": {
+    "gender": "",
+    "relationStatus": "",
+    "profilepic": null,
+    "livingStatus": "",
+    "name": "",
+    "middlename": "",
+    "lastname": "",
+    "isPlus": true
+  },
+  "parents": [""],
+  "wifes": [],
+  "wifeChildrens": null,
+  "husbandChildrens": null,
+  "userChildren": [],
+  "husbands": [],
+  "spouses": []
+}

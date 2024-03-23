@@ -1,8 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View} from 'react-native';
 import * as d3 from 'd3-hierarchy';
-import {Path, G, Rect, Svg} from 'react-native-svg';
+import {G, Svg} from 'react-native-svg';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,9 +17,9 @@ import Nodes from './src/components/Nodes';
 import Spouses from './src/components/Spouses';
 import NodePath from './src/components/NodePath';
 import SpousePath from './src/components/SpousePath';
+import filterTree from './src/components/Functions/filterTree'
 
 const App = () => {
-  // const pressed = useSharedValue(false);
   const x = useSharedValue(0);
   const y = useSharedValue(0);
   const scaleN = useSharedValue(1);
@@ -37,10 +37,6 @@ const App = () => {
     scaleN.value = event.scale;
   });
 
-  const animatedStylesScale = useAnimatedStyle(() => ({
-    transform: [{scale: scaleN.value}],
-  }));
-
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {scale: scaleN.value},
@@ -50,59 +46,6 @@ const App = () => {
   }));
 
   const composed = Gesture.Simultaneous(pan, pinch);
-  const [data, setData] = useState([
-    {name: 'Root', parent: '', spouses: ['Wife of Root'], children: 2},
-
-    {
-      name: 'Parent 1',
-      parent: 'Root',
-      spouses: ['wife 1', 'Wife 2', 'Wife 3', 'wife 4'],
-      children: 2,
-    },
-    {name: '', parent: 'Root'},
-    {name: '', parent: 'Root'},
-    {name: '', parent: 'Root'},
-    {name: '', parent: 'Root'},
-    {
-      name: 'Parent 2',
-      parent: 'Root',
-    },
-
-    {
-      name: 'Child n1',
-      parent: 'Parent 1',
-      spouses: ['Wife n1', 'wife n2'],
-      children: null,
-    },
-    {name: '', parent: 'Parent 1'},
-    {name: '', parent: 'Parent 1'},
-    {
-      name: 'Child n2',
-      parent: 'Parent 1',
-      spouses: ['Wife m1', 'wife m2'],
-      children: 1,
-    },
-    // {name: 'Child nn2', parent: 'Parent 1', spouses: ['Wife m1','wife m2'], children: null},
-    {
-      name: 'child 1',
-      parent: 'Child n2',
-    },
-    {
-      name: 'child 2',
-      parent: 'Child n2',
-    },
-
-    // {name: '', parent: 'Parent 1'},
-    // {name: 'Child nn', parent: 'Parent 1', spouses: ['Wife 2'], children: null},
-    // {name: 'Parent 2', parent: 'Root', spouses: ['Wife 2'], children: 2},
-    // {name: 'Child 3', parent: 'Parent 2'},
-    // {name: 'Child 4', parent: 'Parent 2', spouses: ['Wife 2'], children: 2},
-    // {name: '', parent: 'Parent 2'},
-    // {name: 'Child 5', parent: 'Child 4'},
-    // {name: 'Child 6', parent: 'Child 4'},
-  ]);
-  const [bkUp, setBkUp] = useState([]);
-  const [extTree, setExtTree] = useState(false);
   const plusBox = {
     _id: '',
     personalDetails: {
@@ -504,45 +447,7 @@ const App = () => {
     },
   ]);
 
-  function filterAndRemove(data) {
-    let updatedData = [];
-
-    for (let i = 1; i < data.length; i++) {
-      const child = data[i];
-      // -> adding plus button to spouse
-      if (child?.userChildren?.length > 0 && child?.spouses?.length <= 0) {
-        child?.spouses?.push(plusBox);
-      }
-      if (child.spouses && child.spouses.length > 0) {
-        // Check if spouses exist and add gap if necessary
-        const addEmptySpace = Array(child.spouses.length).fill({
-          _id: '',
-          personalDetails: {
-            gender: '',
-            relationStatus: '',
-            profilepic: null,
-            livingStatus: '',
-            name: '',
-            middlename: '',
-            lastname: '',
-          },
-          parents: child.parents,
-          wifes: [],
-          wifeChildrens: null,
-          husbandChildrens: null,
-          userChildren: [],
-          husbands: [],
-          spouses: [],
-        });
-        updatedData = [...updatedData, child, ...addEmptySpace];
-      } else {
-        updatedData.push(child);
-      }
-    }
-    return updatedData;
-  }
-
-  let filteredResult = filterAndRemove(descendants);
+  let filteredResult = filterTree(descendants);
   filteredResult = [...[descendants[0]], ...filteredResult];
   delete filteredResult[0].spouses;
   const sPS = [
@@ -563,219 +468,6 @@ const App = () => {
     .parentId(d => d.parents?.[0])(filteredResult);
   const treeLayout = d3.tree().size([treeX, treeY]);
   const nodes = treeLayout(treeData);
-
-  // function renderNodes(node, index) {
-  //   return (
-  //     <>
-  //       {node?.data?._id && (
-  //         <View
-  //           key={index}
-  //           style={{
-  //             position: 'absolute',
-  //             left:
-  //               node?.data?.spouses?.length <= 0 || !node?.data?.spouses
-  //                 ? node.x - 70
-  //                 : node.x - 70,
-  //             top: node.y + 10,
-  //             width: 90,
-  //             height: 110,
-  //             backgroundColor: 'white',
-  //             borderRadius: 10,
-  //             shadowColor: 'black',
-  //             shadowOffset: {width: 0, height: 2},
-  //             shadowOpacity: 0.5,
-  //             shadowRadius: 4,
-  //             elevation: 5,
-  //           }}>
-  //           <Rect
-  //             // x={node.x - 65}
-  //             // y={node.y - 20}
-  //             // fill="white"
-  //             width={90}
-  //             //card height
-  //             // height={110}
-  //             strokeWidth={1}
-  //             stroke="silver"
-  //             shadowColor="black"
-  //             shadowOffset={{width: 0, height: 2}}
-  //             shadowOpacity={0.5}
-  //             shadowRadius={4}
-  //             elevation={5}
-  //           />
-  //           <Image
-  //             source={{
-  //               uri: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
-  //             }}
-  //             style={{
-  //               borderRadius: 50,
-  //               width: 60,
-  //               height: 60,
-  //               position: 'absolute',
-  //               left: 14,
-  //               top: 5,
-  //             }}
-  //           />
-  //           <Text
-  //             style={{
-  //               left: -1,
-  //               top: 80,
-  //               fontSize: 10,
-  //               textAlign: 'center',
-  //               color: 'black',
-  //             }}>
-  //             {' '}
-  //             {node.data.personalDetails.name}
-  //           </Text>
-  //         </View>
-  //       )}
-  //     </>
-  //   );
-  // }
-
-  // function goToSpouseTree(spouseName, husbName) {
-  //   const spouseData = [
-  //     {
-  //       name: 'spouseFather',
-  //       parent: '',
-  //       spouses: ['spouseMother'],
-  //       children: 2,
-  //     },
-  //     {
-  //       name: spouseName,
-  //       parent: 'spouseFather',
-  //       spouses: [husbName],
-  //       children: null,
-  //     },
-  //   ];
-  //   setBkUp(data);
-  //   setData(spouseData);
-  //   setExtTree(true);
-  //   setTreeY(200);
-  // }
-
-  // function returnToOwnerTree() {
-  //   setData(bkUp);
-  //   setExtTree(false);
-  //   setTreeY(500);
-  // }
-
-  // function renderSpouses(node, index, spouse) {
-  //   return (
-  //     <>
-  //       {spouse.personalDetails.isPlus ? (
-  //         <>{renderPlusButton(node, index, spouse)}</>
-  //       ) : (
-  //         <>
-  //           <View
-  //             key={index}
-  //             style={{
-  //               position: 'absolute',
-  //               left: index * (viewWidth + gap) + node.x + 60,
-  //               top: node.y + 10,
-  //               width: 90,
-  //               height: 110,
-  //               backgroundColor: 'white',
-  //               borderRadius: 10,
-  //               shadowColor: 'black',
-  //               shadowOffset: {width: 0, height: 2},
-  //               shadowOpacity: 0.5,
-  //               shadowRadius: 4,
-  //               elevation: 5,
-  //             }}>
-  //             <Rect
-  //               fill="none"
-  //               width={90}
-  //               height={110}
-  //               strokeWidth={1}
-  //               stroke="silver"
-  //               rx={10}
-  //               ry={10}
-  //             />
-  //             <Text
-  //               style={{
-  //                 left: 0,
-  //                 top: 80,
-  //                 fontSize: 10,
-  //                 textAlign: 'center',
-  //                 color: 'black',
-  //               }}>
-  //               {' '}
-  //               {spouse.personalDetails.name}
-  //             </Text>
-  //           </View>
-  //           <Image
-  //             source={{
-  //               uri: 'https://www.getnews.info/uploads/bb4710262b9221a3406b68c63334e1b3.jpg',
-  //             }}
-  //             style={{
-  //               borderRadius: 50,
-  //               width: 60,
-  //               height: 60,
-  //               position: 'absolute',
-  //               left: index * (viewWidth + gap) + node.x + 75,
-  //               top: node.y + 15,
-  //             }}
-  //           />
-  //         </>
-  //       )}
-  //     </>
-  //   );
-  // }
-
-  // function renderPlusButton(node, index, spouse) {
-  //   return (
-  //     <>
-  //       <View
-  //         key={index}
-  //         style={{
-  //           position: 'absolute',
-  //           left: index * (viewWidth + gap) + node.x + 60,
-  //           top: node.y + 10,
-  //           width: 90,
-  //           height: 110,
-  //           backgroundColor: 'white',
-  //           borderRadius: 10,
-  //           borderStyle: 'dashed',
-  //           borderWidth: 1,
-  //           borderColor: 'grey',
-  //         }}>
-  //         <Rect
-  //           fill="none"
-  //           width={90}
-  //           height={110}
-  //           strokeWidth={1}
-  //           stroke="silver"
-  //           rx={10}
-  //           ry={10}
-  //         />
-  //         <Text
-  //           style={{
-  //             left: 0,
-  //             top: 80,
-  //             fontSize: 9,
-  //             fontWeight: '400',
-  //             textAlign: 'center',
-  //             color: 'black',
-  //           }}>
-  //           Add Spouse
-  //         </Text>
-  //       </View>
-  //       <Image
-  //         source={{
-  //           uri: 'https://res.cloudinary.com/dskk1dcoe/image/upload/v1711000027/ycycaiwkjru0zpqfx13w.png',
-  //         }}
-  //         style={{
-  //           borderRadius: 50,
-  //           width: 60,
-  //           height: 60,
-  //           position: 'absolute',
-  //           left: index * (viewWidth + gap) + node.x + 75,
-  //           top: node.y + 15,
-  //         }}
-  //       />
-  //     </>
-  //   );
-  // }
 
   return (
     <View style={{flex: 1, transform: [{translateX: -150}]}}>
